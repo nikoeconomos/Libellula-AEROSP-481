@@ -18,6 +18,11 @@ function [aircraft] = generate_performance_params()
 %                                  v1: 9/10/2024
 %                                  v1.1: 9/15/2024 - Added tentative
 %                                  parameters based on the F100-PW-229.
+%                                  v2: 3/11/2025 - Changed relevamt RFP variable inputs
+%                                  to be loaded from table, removed design
+%                                  point declaaration and moved to separate
+%                                  function call inside TW/WS generation
+%                                  
 
 aircraft.name = 'Libellula';
 
