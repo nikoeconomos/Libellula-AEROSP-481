@@ -1,0 +1,153 @@
+function [aircraft] = select_TW_WS_design_point(aircraft)
+%UNTITLED3 Summary of this function goes here
+%   Detailed explanation goes here
+
+dp = aircraft.utility.design_point;
+
+N = 6;
+
+l = 1000; % wing loading limit - want this to cover up to 750 kg/m^2
+t = 1.5; % TW limit
+k = 300; % number of points on the plot
+
+dp.W_S_int = l / k;
+dp.T_W_int = t / k;
+
+Wmax_vec = ones(1,N) .* W_S_landing_field_length_calc(aircraft, NaN);
+Wmax = Wmax_vec(1);
+
+% Suppose f is discretized into N points
+Wvals = (Wmax - N * W_S_int) : dp.W_S_int : Wmax;
+Tvals_ab = zeros(1,N);
+Tvals_mil = zeros(1,N);
+
+for i = 1:N
+    
+    % Max Thrust
+    T_W_sp_ex_pwr_arr_3 = T_W_sp_ex_pwr_calc_3(aircraft, Wvals(i));
+    T_W_sp_ex_pwr_arr_4 = T_W_sp_ex_pwr_calc_4(aircraft, Wvals(i));
+    T_W_sp_ex_pwr_arr_5 = T_W_sp_ex_pwr_calc_5(aircraft, Wvals(i));
+    T_W_sp_ex_pwr_arr_6 = T_W_sp_ex_pwr_calc_6(aircraft, Wvals(i));
+    T_W_sustained_turn_12_arr = T_W_sustained_turn_12_calc(aircraft, Wvals(i));
+
+    TW_ab = [T_W_sp_ex_pwr_arr_3, ...
+        T_W_sp_ex_pwr_arr_4, ...
+        T_W_sp_ex_pwr_arr_5, ...
+        T_W_sp_ex_pwr_arr_6, ...
+        T_W_sustained_turn_12_arr];
+
+    Tvals_ab(i) = max(TW_ab);
+
+    % Military Thrust
+    T_W_sp_ex_pwr_arr_1 = T_W_sp_ex_pwr_calc_1(aircraft, Wvals(i));
+    T_W_sp_ex_pwr_arr_2 = T_W_sp_ex_pwr_calc_2(aircraft, Wvals(i));
+    T_W_sustained_turn_09_arr = T_W_sustained_turn_09_calc(aircraft, Wvals(i));
+    T_W_climb_arr_1 = T_W_climb_calc_1(aircraft, NaN);
+    T_W_climb_arr_3 = T_W_climb_calc_3(aircraft, NaN); 
+    T_W_climb_arr_4 = T_W_climb_calc_4(aircraft, NaN); 
+    T_W_climb_arr_5 = T_W_climb_calc_5(aircraft, NaN); 
+
+    TW_mil = [T_W_sp_ex_pwr_arr_1, ...
+        T_W_sp_ex_pwr_arr_2, ...
+        T_W_sustained_turn_09_arr, ...
+        T_W_climb_arr_1, ...
+        T_W_climb_arr_3, ...
+        T_W_climb_arr_4, ...
+        T_W_climb_arr_5];
+
+    Tvals_mil(i) = max(TW_mil);
+
+end
+
+% Build a closed polygon:
+polyW = [Wvals, Wmax, Wvals(1)];
+polyT_max = [Tvals_ab, Tvals_ab(1), Tvals_ab(1)];
+
+if Tvals_mil(1) == Tvals_mil(end)
+    Tmax = Tvals_mil(1) + 0.08;
+    polyT_mil = [Tvals_mil, Tmax, Tvals_mil(1)];
+else
+    polyT_mil = [Tvals_mil, Tvals_mil(1), Tvals_mil(1)];
+end
+
+%% Pick point - MAX %%
+pt_max = [];
+maxIter = 1e5; 
+iter = 0;
+
+Wmin = Wvals(1);
+Tmin = Tvals(end);
+Tmax = Tvals(1);
+
+margin = 0.9*sqrt(dp.W_S_int^2 + dp.TW_int^2);
+
+    while isempty(pt_max) && iter < maxIter
+        iter = iter + 1;
+        % 1) Random candidate in bounding box
+        candW = Wmin + (Wmax - Wmin)*rand;
+        candT = Tmin + (Tmax - Tmin)*rand;
+        
+        % 2) Check if inside the polygon
+        if inpolygon(candW, candT, polyW, polyT_max)
+            % 3) (Optional) Check distance from boundary
+            if margin > 0
+                % Distances from candidate to each polygon vertex
+                dists = sqrt((polyW - candW).^2 + (polyT_max - candT).^2);
+                if min(dists) >= margin
+                    pt_max = [candW, candT];
+                end
+            else
+                pt_max = [candW, candT];
+            end
+        end
+    end
+    
+    if isempty(pt_max)
+        error('No valid point found after %d iterations. Check margin/region.', maxIter);
+    end
+
+
+aircraft.pefromance.WS_design = pt_max(1);
+aircraft.pefromance.TW_design = pt_max(2);
+
+%% Pick point - MILITARY %%
+pt_mil = [];
+maxIter = 1e5; 
+iter = 0;
+
+candW = pt_max(1);
+Tmin = Tvals(end);
+Tmax = Tvals(1);
+
+margin = 0.9*sqrt(dp.W_S_int^2 + dp.TW_int^2);
+
+    while isempty(pt_mil) && iter < maxIter
+        iter = iter + 1;
+        % 1) Random candidate in bounding box
+        candT = Tmin + (Tmax - Tmin)*rand;
+        
+        % 2) Check if inside the polygon
+        if inpolygon(candW, candT, polyW, polyT_mil)
+            % 3) (Optional) Check distance from boundary
+            if margin > 0
+                % Distances from candidate to each polygon vertex
+                dists = sqrt((polyW - candW).^2 + (polyT_mil - candT).^2);
+                if min(dists) >= margin
+                    pt_mil = [candW, candT];
+                end
+            else
+                pt_mil = [candW, candT];
+            end
+        end
+    end
+    
+    if isempty(pt_mil)
+        error('No valid point found after %d iterations. Check margin/region.', maxIter);
+    end
+
+aircraft.pefromance.TW_design_military = pt_mil(2);
+
+
+aircraft.utility.design_point = dp;
+
+end

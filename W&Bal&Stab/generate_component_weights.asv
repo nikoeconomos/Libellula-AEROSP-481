@@ -41,14 +41,22 @@ function aircraft = generate_component_weights(aircraft)
     %% FUSELAGE %%
     %%%%%%%%%%%%%%
 
-    aircraft.geometry.fuselage.S_wet = 94.614; % m2 from CAD
+    % aircraft.geometry.fuselage.S_wet = 94.614; % m2 from CAD
 
-    aircraft.geometry.fuselage.width = 2.1; % max width of fuselage from CAD
+    aircraft.geometry.fuselage.width = 2.6; % max width of fuselage from CAD
     aircraft.geometry.fuselage.length = 16.5; % length of fuselage from CAD
-    aircraft.geometry.fuselage.height = 1.632; % length of fuselage from CAD
+    aircraft.geometry.fuselage.height = 1.67; % length of fuselage from CAD
     aircraft.geometry.fuselage.A_max = 2.5; % m2, TODO UPDATE
-
+    
     aircraft.weight.density.fuselage_area = 23; %kg/m2 metabook p76
+    
+    fus_length_mean = ConvLength((62.58*0.2 + 51*0.30 + 59.33*0.35 + 74.25*0.15) ,'ft' ,'m');% weighted average between following ac: f-14/f35-A/panavia tornado/mig-31 biased toward smaller ac like panavia
+    
+    aircraft.geometry.fuselage.length = fus_length_mean;
+
+    aircraft.geometry.fuselage.S_wet = fus_length_mean / 0.1744; % from weighted average between many aircraft and ratio from our aircraft
+
+    fus_length_to_width = 16.5 / 2.6;
 
     aircraft.weight.components.fuselage = (aircraft.geometry.fuselage.S_wet*aircraft.weight.density.fuselage_area)...
                                           *aircraft.weight.fudge_factor.fuselage;
@@ -77,13 +85,18 @@ function aircraft = generate_component_weights(aircraft)
     wing = aircraft.geometry.wing;
 
     wing.S_ref = aircraft.geometry.wing.S_ref; %m2, updated in geometry
-    wing.S_exposed = 
+    
+    approx_conc_wing = fus_length_mean * 0.1576 * 0.92;
+    
+    %wing.S_exposed = 7.976*2; % from CAD
 
-    %wing.S_wet = wing.S_ref*2; %m2 TODO APPROXIMATION, UPDATE WITH A BETTER ONE
-    wing.S_wet = wing.S_ref*2;
+    wing.S_wet = 2 * (wing.S_ref - approx_conc_wing); %m2 TODO APPROXIMATION, UPDATE WITH A BETTER ONE
+    
+    %wing.S_wet = 27.35; %from CAD
+    
     wing.b = sqrt(wing.AR*wing.S_ref);
 
-    wing.taper_ratio = 0.35;
+    %wing.taper_ratio = 0.35; - now included in load inputs
 
     wing.c_root = 2*wing.S_ref / ( (1+wing.taper_ratio) * wing.b); % TODO where does this come from? - CAD ACCURATE
     wing.c_tip = wing.c_root*wing.taper_ratio;
@@ -98,7 +111,7 @@ function aircraft = generate_component_weights(aircraft)
     wing.sweep_TE = atan( tan(wing.sweep_LE) - (4 / wing.AR) * ((1.00 * (1 - wing.taper_ratio)) / (1 + wing.taper_ratio)) );
 
     % locations/MAC
-    wing.xRLE = 7.083; %m positino of leading edge of the root chord, from CAD
+    wing.xRLE = 6.25;%7.083; %m positino of leading edge of the root chord, from CAD
     wing.xR25 = wing.xRLE + 0.25*wing.c_root; % position of quarter chord at root of wing
 
     wing.MAC   = aircraft.weight.func.MAC_calc  (wing.c_root, wing.c_tip);
@@ -298,7 +311,7 @@ function aircraft = generate_component_weights(aircraft)
 
         if abs(W_0_new - W_0) <= tol
             converged = true;
-        end
+        end 
 
         W_0 = W_0_new;
     end
@@ -336,9 +349,9 @@ function aircraft = generate_component_weights(aircraft)
 
     f = w.fuel_vol;
     
-    f.fore       = 0.90; %m3
-    f.center     = 3.608;
-    f.aft        = 1.735;
+    f.fore       = 0.554; %m3
+    f.center     = 4.278;
+    f.aft        = 1.414;
     f.right_wing = 0.237; 
     f.left_wing  = f.right_wing;
 
@@ -347,12 +360,12 @@ function aircraft = generate_component_weights(aircraft)
     remainder = f.total_available - f.total_used;
 
     if f.total_available-f.total_used < 0
-        %error('Not enough fuel available silly!')
+        error('Not enough fuel available silly!')
     end
 
-    f.fore_pct       = f.fore       / f.total_used; % percent
+    f.fore_pct       = (f.fore-remainder)  / f.total_used; % percent
     f.center_pct     = f.center     / f.total_used;
-    f.aft_pct        = (f.aft-remainder) / f.total_used; %because we have a bit over what we need
+    f.aft_pct        = f.aft        / f.total_used; %because we have a bit over what we need
     f.left_wing_pct  = f.left_wing  / f.total_used;
     f.right_wing_pct = f.right_wing / f.total_used;
 
@@ -365,27 +378,18 @@ function aircraft = generate_component_weights(aircraft)
     %%%%%%%%%%%%%%%%%%%
 
     aircraft.weight = w;
-    plot_weight_pie_chart(aircraft);
+    % plot_weight_pie_chart(aircraft);
 
     %%%%%%%%%%%%%%%%%%%%
     %% CG AND SM CALCULATION %%
     %%%%%%%%%%%%%%%%%%%%
-
-    % TODO FIX
     
-    aircraft = cg_calc_plot(aircraft); % TODO UPDATE MISSION PROFILE IF MISSILES CHANGE
-    aircraft = generate_LG_params(aircraft);
+    % aircraft = cg_calc_plot(aircraft); % TODO UPDATE MISSION PROFILE IF MISSILES CHANGE
+    % aircraft = generate_LG_params(aircraft);
     
-    aircraft = SM_calc_plot(aircraft); % sets the np and sm arrays for a full mission profile.
+    % aircraft = SM_calc_plot(aircraft); % sets the np and sm arrays for a full mission profile.
 
-    %aircraft = empennage_aerodynamics_calc(aircraft);
-
-    %%%%%%%%%%%%%%%%%
-    %% COST UPDATE %%
-    %%%%%%%%%%%%%%%%%
-
-    %aircraft.cost.avg_flyaway_cost = avg_flyaway_cost_calc(aircraft.weight.togw, 1000);
-    
+    %aircraft = empennage_aerodynamics_calc(aircraft);    
 
 end
     

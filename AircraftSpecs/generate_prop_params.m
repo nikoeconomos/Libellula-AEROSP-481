@@ -30,14 +30,14 @@ aircraft.propulsion.engine_name = 'F110-GE-129';
 aircraft.propulsion.num_engines = 1;
 
 % max thrust
-aircraft.propulsion.T_max = 144600; %[N] TOTAL THRUST FROM BOTH ENGINES
+aircraft.propulsion.T_max = 129000; %[N] TOTAL THRUST FROM BOTH ENGINES
 
 % military thrust
-aircraft.propulsion.T_military = 84500; %[N] TOTAL THRUST
+aircraft.propulsion.T_military = 76300; %[N] TOTAL THRUST
 
-aircraft.propulsion.bypass_ratio = 0.68;
+aircraft.propulsion.bypass_ratio = 0.87;
 
-aircraft.propulsion.max_diameter = 1.2; %m
+aircraft.propulsion.max_diameter = 1.18; %m
 
 aircraft.propulsion.airflow = 122.4; %kg/s
 

@@ -72,13 +72,12 @@ aircraft.mission.climb.engines_active = [1, 1, 1,...
 %% THRUST CORRECTIONS %%
 %%%%%%%%%%%%%%%%%%%%%%%% 
 
-OEI_correction = 2; % Using formula (N_engines/(N_engines-1)) for 2 engines
 W_correction = aircraft.weight.max_landing_weight/aircraft.weight.togw; % Only applies for balked landing scenario with maximum landing weight
 Temp_correction = 1/0.8; % metabook --> fahrenheit?
 Max_T_correction = 1/0.94; % for max continuous thrust decrease from max thrust
 
-aircraft.mission.climb.TW_corrections = [Temp_correction*OEI_correction, Temp_correction*OEI_correction, Temp_correction*OEI_correction, ...
-                                         Temp_correction*OEI_correction*Max_T_correction, Temp_correction*W_correction, Temp_correction*OEI_correction*W_correction]; 
+aircraft.mission.climb.TW_corrections = [Temp_correction, Temp_correction, Temp_correction, ...
+                                         Temp_correction*Max_T_correction, Temp_correction*W_correction, Temp_correction*W_correction]; 
 
 aircraft.mission.climb.TW_ceiling_correction = Temp_correction*Max_T_correction;
 

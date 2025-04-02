@@ -37,7 +37,7 @@ aircraft.weight.W_e_regression_calc = @ (W_0) 0.882*(ConvMass(W_0,'kg','lbm')^-0
 %%%%%%%%%%%%%%%%%%%%%
 
 % Weight of the missile we are tasked with using, AIM120 327 lb from RFP
-aircraft.weight.weapons.num_missiles = 4;
+% aircraft.weight.weapons.num_missiles = 4;
 aircraft.weight.weapons.missile = ConvMass(327, 'lbm', 'kg'); %[kg]
 
 % Weight of the cannon we are tasked with using, 275LB from RFP. not part of payload
@@ -59,6 +59,14 @@ aircraft.weight.weapons.m61a1.total_loaded = aircraft.weight.weapons.m61a1.feed_
 aircraft.weight.components.payload = aircraft.weight.weapons.num_missiles*aircraft.weight.weapons.missile + ...
                           aircraft.weight.weapons.m61a1.feed_system + aircraft.weight.weapons.m61a1.ammo + aircraft.weight.weapons.m61a1.cannon; %aircraft.weight.weapons.m61a1.total_loaded;  %[kg]
 
+%% DROP TANK WEIGHTS %%
+%%%%%%%%%%%%%%%%%%%%%%%
+
+aircraft.geometry.drop_tank.diameter = 0.75;         % overall tank diameter [m]
+aircraft.geometry.drop_tank.radius = aircraft.geometry.drop_tank.diameter / 2; % tank radius [m]
+aircraft.geometry.drop_tank.skin_thckness = 0.003;   % skin thickness [m]
+
+
 %% COMPONENT DENSITIES %%
 %%%%%%%%%%%%%%%%%%%%%%%%%
 
@@ -67,6 +75,8 @@ aircraft.weight.density.wing_area = 44; % kg/m^2, from Metabook pg 76
 aircraft.weight.density.fuel = 802.837; %[kg/m^3] 6.7 lb per gal from RFP
 
 aircraft.weight.density.oil = 1003.55; % kg/m3
+
+aircraft.weight.density.aluminium = 2700;    % density of aluminium [kg/m^3]
 
 %% Initial Weight Calculations %%
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

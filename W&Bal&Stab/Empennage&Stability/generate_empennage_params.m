@@ -40,7 +40,7 @@ function [aircraft] = generate_empennage_params(aircraft)
     htail.c_root = 2*htail.S_ref / ( (1+htail.taper_ratio) * htail.b); % m TODO CONFIRM WHERE CAME FROM
     htail.c_tip  = htail.c_root*htail.taper_ratio;
 
-    htail.sweep_LE = deg2rad(49.9); % radians 
+    htail.sweep_LE = aircraft.geometry.wing.sweep_LE + deg2rad(5); % radians 
     htail.sweep_QC = atan( tan(htail.sweep_LE) - (4 / htail.AR) * ((0.25 * (1 - htail.taper_ratio)) / (1 + htail.taper_ratio)) ); % formula from aerodynamics slide 24
     htail.sweep_HC = atan( tan(htail.sweep_LE) - (4 / htail.AR) * ((0.50 * (1 - htail.taper_ratio)) / (1 + htail.taper_ratio)) );
     htail.sweep_TE = atan( tan(htail.sweep_LE) - (4 / htail.AR) * ((1.00 * (1 - htail.taper_ratio)) / (1 + htail.taper_ratio)) );
@@ -48,7 +48,9 @@ function [aircraft] = generate_empennage_params(aircraft)
     htail.t_c_root                    = 0.0524; % 5% tc ratio, from our 1st optimization airfoil from mach aero
     htail.chordwise_loc_max_thickness = 0.575; % pulled from cad
     
-    htail.xRLE = 14.167; % m position of leading edge of the root chord, from CAD, from nose tip TODO UPDATE
+    % htail.xRLE = 14.167; % m position of leading edge of the root chord, from CAD, from nose tip TODO UPDATE
+
+    htail.xRLE = 0.8586 * aircraft.geometry.fuselage.length; % ratio from our interceptor design
 
     % MAC and CG = at 0.4MAC
     htail.MAC  = aircraft.weight.func.MAC_calc(htail.c_root, htail.c_tip);

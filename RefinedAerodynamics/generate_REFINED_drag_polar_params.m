@@ -373,14 +373,15 @@ M_crit  = M_DD - (0.1 / 80)^(1/3);
 aero.CD_wave = 20 * (freestream_mach - M_crit).^4;
 aero.CD_wave(1) = 0; %no wave drag at slow speeds
 aero.CD_wave(2) = 0; %no wave drag at slow speeds
-figure()
-scatter(flight_mach,Cd_cfd)
-title('Change in Wing Airfoil Drag Coefficient with Mach Number')
-xlabel('Flight Mach Number')
-ylabel('Drag Coefficient')
-hold on
-xline(0.95,'r--',LineWidth=0.5);
-legend('','Drag Divergence Mach = 0.95')
+
+% figure()
+% scatter(flight_mach,Cd_cfd)
+% title('Change in Wing Airfoil Drag Coefficient with Mach Number')
+% xlabel('Flight Mach Number')
+% ylabel('Drag Coefficient')
+% hold on
+% xline(0.95,'r--',LineWidth=0.5);
+% legend('','Drag Divergence Mach = 0.95')
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %% TOTAL DRAG COEFFICIENT %%

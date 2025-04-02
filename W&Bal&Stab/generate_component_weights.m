@@ -41,14 +41,26 @@ function aircraft = generate_component_weights(aircraft)
     %% FUSELAGE %%
     %%%%%%%%%%%%%%
 
-    aircraft.geometry.fuselage.S_wet = 94.614; % m2 from CAD
+    % aircraft.geometry.fuselage.S_wet = 94.614; % m2 from CAD
 
     aircraft.geometry.fuselage.width = 2.6; % max width of fuselage from CAD
     aircraft.geometry.fuselage.length = 16.5; % length of fuselage from CAD
     aircraft.geometry.fuselage.height = 1.67; % length of fuselage from CAD
     aircraft.geometry.fuselage.A_max = 2.5; % m2, TODO UPDATE
-
+    
     aircraft.weight.density.fuselage_area = 23; %kg/m2 metabook p76
+    
+    fus_length_mean = ConvLength((62.58*0.2 + 51*0.30 + 59.33*0.35 + 74.25*0.15) ,'ft' ,'m');% weighted average between following ac: f-14/f35-A/panavia tornado/mig-31 biased toward smaller ac like panavia
+    
+    aircraft.geometry.fuselage.length = fus_length_mean;
+
+    aircraft.geometry.fuselage.S_wet = fus_length_mean / 0.1744; % from weighted average between many aircraft and ratio from our aircraft
+
+    fus_length_to_width = 16.5 / 2.6;
+
+    aircraft.geometry.fuselage.width = fus_length_mean / fus_length_to_width;
+
+    aircraft.geometry.fuselage.A_max = 2.7;
 
     aircraft.weight.components.fuselage = (aircraft.geometry.fuselage.S_wet*aircraft.weight.density.fuselage_area)...
                                           *aircraft.weight.fudge_factor.fuselage;
@@ -77,13 +89,18 @@ function aircraft = generate_component_weights(aircraft)
     wing = aircraft.geometry.wing;
 
     wing.S_ref = aircraft.geometry.wing.S_ref; %m2, updated in geometry
-    wing.S_exposed = 7.976*2; % from CAD
+    
+    approx_conc_wing = fus_length_mean * 0.1576 * 0.92;
+    
+    %wing.S_exposed = 7.976*2; % from CAD
 
-    %wing.S_wet = wing.S_ref*2; %m2 TODO APPROXIMATION, UPDATE WITH A BETTER ONE
-    wing.S_wet = 27.35; %from CAD
+    wing.S_wet = 2 * (wing.S_ref - approx_conc_wing); %m2 TODO APPROXIMATION, UPDATE WITH A BETTER ONE
+    
+    %wing.S_wet = 27.35; %from CAD
+    
     wing.b = sqrt(wing.AR*wing.S_ref);
 
-    wing.taper_ratio = 0.35;
+    %wing.taper_ratio = 0.35; - now included in load inputs
 
     wing.c_root = 2*wing.S_ref / ( (1+wing.taper_ratio) * wing.b); % TODO where does this come from? - CAD ACCURATE
     wing.c_tip = wing.c_root*wing.taper_ratio;
@@ -365,16 +382,16 @@ function aircraft = generate_component_weights(aircraft)
     %%%%%%%%%%%%%%%%%%%
 
     aircraft.weight = w;
-    plot_weight_pie_chart(aircraft);
+    % plot_weight_pie_chart(aircraft);
 
     %%%%%%%%%%%%%%%%%%%%
     %% CG AND SM CALCULATION %%
     %%%%%%%%%%%%%%%%%%%%
     
-    aircraft = cg_calc_plot(aircraft); % TODO UPDATE MISSION PROFILE IF MISSILES CHANGE
-    aircraft = generate_LG_params(aircraft);
+    % aircraft = cg_calc_plot(aircraft); % TODO UPDATE MISSION PROFILE IF MISSILES CHANGE
+    % aircraft = generate_LG_params(aircraft);
     
-    aircraft = SM_calc_plot(aircraft); % sets the np and sm arrays for a full mission profile.
+    % aircraft = SM_calc_plot(aircraft); % sets the np and sm arrays for a full mission profile.
 
     %aircraft = empennage_aerodynamics_calc(aircraft);    
 

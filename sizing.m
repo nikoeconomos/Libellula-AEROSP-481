@@ -8,7 +8,15 @@ close all;
 
 %% POPULATE INITIAL AIRCRAFT STRUCTS %%
 
-aircraft = generate_performance_params();
+inputs = readcsv('inputs.csv');
+
+for ind = 1:size(inputs,2)
+
+tic;
+
+aircraft = load_inputs(inputs,ind);
+
+aircraft = generate_performance_params(aircraft);
 aircraft = generate_DCA_mission(aircraft);
 
 aircraft = generate_init_weight_params(aircraft);
@@ -27,6 +35,8 @@ aircraft = generate_climb_segments(aircraft);
 
 %% GENERATE PRELIMINARY SIZINCAG PLOTS %%
 
+aircraft = select_TW_WS_design_point(aircraft);
+
 plot_T_W_W_S_space(aircraft)
 
 plot_T_S_space(aircraft)
@@ -38,7 +48,7 @@ plot_T_S_space(aircraft)
 aircraft = generate_component_weights(aircraft);
 
 aircraft = generate_REFINED_drag_polar_params(aircraft);
-plot_drag_polar(aircraft);
+%plot_drag_polar(aircraft);
 
 %plot_V_n_diagram(aircraft);
 
@@ -51,8 +61,18 @@ aircraft = generate_plot_cost_params(aircraft);
 
 %% PRINT %%
 
+output_mat = zeros(Size(inputs,1), ind);
+output_mat(:,ind) = output_sizing_results(aircraft);
+
+elapsedTime = toc; % Stop timing and record the elapsed time
+fprintf('Iteration %d took %.4f seconds\n', ind, elapsedTime);
+
+end
+
+writematrix(output_mat, 'output.csv');
+
 aircraft;
 
 disp(newline)
 
-disp("Sizing complete.")
+disp("Design Space Complete")

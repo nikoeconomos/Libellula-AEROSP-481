@@ -22,6 +22,9 @@ function [] = plot_T_W_W_S_space(aircraft)
     t = 1.5; % TW limit
     k = 300; % number of points on the plot
 
+    aircraft.utility.des_pt.W_S_int = l / k;
+    aircraft.utility.des_pt.T_W_int = t / k;
+
     % WS and TW arrays to pull from
     W_S_space =  linspace(0,l,k); %kg per m^2
     T_W_space =  linspace(0,t,k); %kg per m^2
@@ -79,6 +82,23 @@ function [] = plot_T_W_W_S_space(aircraft)
 
     % Landing field length
     W_S_landing_field_length_arr = ones(1, k) .* W_S_landing_field_length_calc(aircraft, NaN); % does not depend on T_W
+    
+    %% Save for design point picking %%
+
+    % 1st row is W/S value
+    % 2nd row is T/W value
+    aircraft.performance.constraint_space.WS_LFL = [W_S_landing_field_length_arr; T_W_space];
+
+    aircraft.performance.constraint_space.TW_5g_4500m_Max= [W_S_space; T_W_sp_ex_pwr_arr_6];
+
+    aircraft.performance.constraint_space.TW_5g_SL_Max = [W_S_space; T_W_sp_ex_pwr_arr_5];
+
+    aircraft.performance.constraint_space.TW_1g_4500m_Max = [W_S_space; T_W_sp_ex_pwr_arr_4];
+
+    aircraft.performance.constraint_space.TW_1g_SL_Max = [W_S_space; T_W_sp_ex_pwr_arr_3];
+
+    aircraft.performance.constraint_space.TW_sust_turn = [W_S_space; T_W_sustained_turn_12_arr];
+
 
     %% Plotting the calculated values, all together%%
     %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

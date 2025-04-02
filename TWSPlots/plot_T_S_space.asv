@@ -26,7 +26,7 @@ function [] = plot_T_S_space(aircraft)
     S_max = 45; % TODO update with actual values
 
     T_min = 0; % TODO update with actual values
-    T_max = aircraft.propulsion.T_max; % TODO update with actual values
+    T_max = aircraft.; % TODO update with actual values
     
     S = linspace(S_min, S_max, k); %kg per m^2
     T = linspace(T_min, T_max, k); % N

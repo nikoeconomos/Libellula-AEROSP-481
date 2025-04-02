@@ -20,11 +20,11 @@ function [aircraft] = generate_CL_params(aircraft)
 aircraft.geometry.S_wet_regression_calc = @(W0) ConvArea( 10^(-0.1289)*(ConvMass(W0,'kg','lbm'))^0.7506, 'ft2','m2'); 
 aircraft.geometry.length_regression_calc = @(W0) 0.389*W0^0.39; % this is a historical regression from Raymer table 6.3
 
-aircraft.geometry.wing.AR = 3.6; %From trade studies
+% aircraft.geometry.wing.AR = 3.6; %From trade studies
 
 wing = aircraft.geometry.wing;
 
-wing.sweep_LE = deg2rad(44.9); %radians
+% wing.sweep_LE = deg2rad(44.9); %radians
 wing.S_ref = 25.25;
 
 wing.S_flapped = 7.23*2; % TODO UPDATE
@@ -32,8 +32,8 @@ wing.S_slatted = 7.23*2; % TODO UPDATE
 
 wing.b = sqrt(wing.AR * wing.S_ref);
 
-wing.sweep_flap_hinge = deg2rad(31.8);
-wing.sweep_slat_hinge = deg2rad(43.3); % [rad]
+wing.sweep_flap_hinge = deg2rad(wing.sweep_LE - 13.1);
+wing.sweep_slat_hinge = deg2rad(wing.sweep_LE - 1.6); % [rad]
 
 wing.c_flapped_over_c = 0.3; % ratio of flapped chord to chord
 wing.c_slatted_over_c = 0.1; 
