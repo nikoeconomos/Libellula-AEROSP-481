@@ -89,20 +89,6 @@ aircraft.weight.ff = ff_total_calc(aircraft);
 aircraft.weight.togw = togw;
 aircraft.weight.empty = w_e;
 
-if inputs.drop_tank == true
-dt_fuel_share = inputs.dt_share;
-onboard_fuel_share = 1 - inputs.dt_share;
-
-aircraft.weight.components.fuel = aircraft.weight.ff*aircraft.weight.togw;
-aircraft.weight.components.dt_fuel = aircraft.weight.components.fuel*dt_fuel_share;
-aircraft.weight.components.onboard_fuel = aircraft.weight.components.fuel*onboard_fuel_share;
-
-aircraft.weights.components.drop_tank_structure = dt_empty_weight_calc(aircraft);
-
-
-
-end
-
 aircraft.weight.PDI_ff = 0.1530;
 aircraft.weight.max_landing_weight = 1-(aircraft.weight.PDI_ff/2)* aircraft.weight.togw; % Googled common share of togw that is max landing weight
 

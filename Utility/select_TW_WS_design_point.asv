@@ -107,17 +107,17 @@ margin = 0.5*sqrt(dp.W_S_int^2 + dp.T_W_int^2);
     end
 
 
-aircraft.performance.WS_design = pt_max(1);
-aircraft.performance.TW_design = pt_max(2);
+aircraft.pefromance.WS_design = pt_max(1);
+aircraft.pefromance.TW_design = pt_max(2);
 
 dp.T_max = aircraft.propulsion.T_max;
-aircraft.weight.togw = dp.T_max / aircraft.performance.TW_design;
+aircraft.weight.togw = dp.T_max / aircraft.pefromance.TW_design;
 
-aircraft.performance.TW_design_military = aircraft.propulsion.T_military / aircraft.weight.togw;
+aircraft.pefromance.TW_design_military = aircraft.propulsion.T_military) / aircraft.weight.togw;
 
-dp.S_ref_2 = aircraft.weight.togw / aircraft.performance.WS_design;
+dp.S_ref_2 = aircraft.weight.togw / aircraft.pefromance.WS_design;
 aircraft.geometry.wing.S_ref = dp.S_ref_2;
 
-aircraft.performance.design_point = dp;
+aircraft.perfomance.design_point = dp;
 
 end

@@ -8,7 +8,9 @@ close all;
 
 %% POPULATE INITIAL AIRCRAFT STRUCTS %%
 
-inputs = readcsv('inputs.csv');
+ aircraft = struct();
+
+inputs = readmatrix('740_inputs.csv', 'Range', 'A2');
 
 for ind = 1:size(inputs,2)
 
@@ -19,13 +21,13 @@ aircraft = load_inputs(inputs,ind);
 aircraft = generate_performance_params(aircraft);
 aircraft = generate_DCA_mission(aircraft);
 
-aircraft = generate_init_weight_params(aircraft);
+aircraft = generate_init_weight_params(aircraft); % gives a togw
 aircraft = generate_prop_params(aircraft);
 
-aircraft = generate_CL_params(aircraft);
+aircraft = generate_CL_params(aircraft); % this is where guess S_ref is input
 aircraft = generate_aerodynamics_params(aircraft);
 
-aircraft = generate_init_weight_params(aircraft); % run again for better estimate
+aircraft = generate_init_weight_params(aircraft); % run again for better estimate - gives a togw
 
 aircraft = generate_climb_segments(aircraft);
 
@@ -37,9 +39,8 @@ aircraft = generate_climb_segments(aircraft);
 
 aircraft = select_TW_WS_design_point(aircraft);
 
-plot_T_W_W_S_space(aircraft)
+% plot_T_W_W_S_space(aircraft)
 
-plot_T_S_space(aircraft)
 % plot_T_S_space_F35(aircraft)
 % [togw, ff, W_e] = togw_as_func_of_T_S_calc(aircraft, aircraft.propulsion.T_max, aircraft.geometry.wing.S_ref)
 

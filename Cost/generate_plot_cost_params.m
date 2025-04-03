@@ -304,97 +304,97 @@ cost.operation.per_hour = C_OPS/total_service_hours;
 %% PLOTTING %%
 %%%%%%%%%%%%%%
 
-%% RTDE Flyaway %%
-
-% Exclude "total" and create a pie chart
-labels = {'Engine', 'Quality Control', 'Engineering', 'Tooling', 'Manufacturing', ...
-          'Manufacturing Material', 'Flight Test', 'Avionics', 'Development Support'};
-
-values = [cost.RTDE_flyaway.engines, cost.RTDE_flyaway.quality_ctrl, cost.RTDE_flyaway.engineering, ...
-          cost.RTDE_flyaway.tooling, cost.RTDE_flyaway.manufacturing, ...
-          cost.RTDE_flyaway.manufacturing_material, cost.RTDE_flyaway.flight_test, ...
-          cost.RTDE_flyaway.avionics,cost.RTDE_flyaway.development_support];
-
-% Calculate the total
-cost.RTDE_flyaway.total = sum(values);
-
-% Less muted color palette (slightly more vibrant)
-colors = [145, 163, 176; 174, 200, 202; 143, 179, 157; 191, 171, 141; ...
-          131, 119, 139; 167, 149, 139; 171, 186, 158; 149, 151, 169; ...
-          139, 139, 127] / 255;  % RGB normalized to 0-1
+% %% RTDE Flyaway %%
+% 
+% % Exclude "total" and create a pie chart
+% labels = {'Engine', 'Quality Control', 'Engineering', 'Tooling', 'Manufacturing', ...
+%           'Manufacturing Material', 'Flight Test', 'Avionics', 'Development Support'};
+% 
+% values = [cost.RTDE_flyaway.engines, cost.RTDE_flyaway.quality_ctrl, cost.RTDE_flyaway.engineering, ...
+%           cost.RTDE_flyaway.tooling, cost.RTDE_flyaway.manufacturing, ...
+%           cost.RTDE_flyaway.manufacturing_material, cost.RTDE_flyaway.flight_test, ...
+%           cost.RTDE_flyaway.avionics,cost.RTDE_flyaway.development_support];
+% 
+% % Calculate the total
+% cost.RTDE_flyaway.total = sum(values);
+% 
+% % Less muted color palette (slightly more vibrant)
+% colors = [145, 163, 176; 174, 200, 202; 143, 179, 157; 191, 171, 141; ...
+%           131, 119, 139; 167, 149, 139; 171, 186, 158; 149, 151, 169; ...
+%           139, 139, 127] / 255;  % RGB normalized to 0-1
+% 
+% % Create the pie chart with percentages
+% figure;
+% h = pie(values);
+% 
+% % Add labels with percentages, showing 2 decimal points
+% percentLabels = arrayfun(@(x) ...
+%     [labels{x}, ' (', sprintf('%.2f', (values(x) / cost.RTDE_flyaway.total) * 100), '%)'], ...
+%     1:length(values), 'UniformOutput', false);
+% 
+% textHandles = findobj(h, 'Type', 'Text');
+% for i = 1:length(textHandles)
+%     textHandles(i).String = percentLabels{i};
+% end
+% 
+% % Apply less muted colors to each segment
+% patchHandles = findobj(h, 'Type', 'Patch'); % Find pie chart patches
+% for i = 1:length(patchHandles)
+%     patchHandles(i).FaceColor = colors(i, :); % Assign vibrant color
+% end
+% 
+% % Add a title with the rounded total formatted with commas
+% rounded_total = round(cost.RTDE_flyaway.total / 1e6) * 1e6;
+% formatted_total = sprintf('%0.0f', rounded_total);  % Format the number as a string with no decimal places
+% formatted_total_with_commas = regexprep(formatted_total, '(?<=\d)(?=(\d{3})+(?!\d))', ',');
+% 
+% title(['Program RTDE & Flyaway Costs Breakdown']);
+% 
+% 
+% %% Operations %%
+% 
+% % Exclude "total" and create a pie chart
+% labels = {'Fuel, Oil, Lubricant', 'Flight Crew', 'Maintenance Crew', ...
+%           'Consumable Materials', 'Misc', 'Indirect Personnel', ...
+%           'Spares', 'Depot'};
+% 
+% values = [cost.operation.fuel_oil_lubricant, cost.operation.direct_personnel.flight_crew, ...
+%           cost.operation.direct_personnel.maintenance_crew, cost.operation.consumable_materials, ...
+%           cost.operation.misc, cost.operation.indirect_personnel, cost.operation.spares, ...
+%           cost.operation.depot];
+% 
+% % Calculate the total
+% cost.operation.total = sum(values);
+% 
+% % Updated muted blue-gray-purple color palette with navy-like darker shades
+% colors = [142, 160, 186; 171, 184, 197; 154, 153, 174; 186, 175, 192; ...
+%           123, 133, 161; 102, 116, 138; 89, 101, 129; 78, 92, 113] / 255;
 
 % Create the pie chart with percentages
-figure;
-h = pie(values);
-
-% Add labels with percentages, showing 2 decimal points
-percentLabels = arrayfun(@(x) ...
-    [labels{x}, ' (', sprintf('%.2f', (values(x) / cost.RTDE_flyaway.total) * 100), '%)'], ...
-    1:length(values), 'UniformOutput', false);
-
-textHandles = findobj(h, 'Type', 'Text');
-for i = 1:length(textHandles)
-    textHandles(i).String = percentLabels{i};
-end
-
-% Apply less muted colors to each segment
-patchHandles = findobj(h, 'Type', 'Patch'); % Find pie chart patches
-for i = 1:length(patchHandles)
-    patchHandles(i).FaceColor = colors(i, :); % Assign vibrant color
-end
-
-% Add a title with the rounded total formatted with commas
-rounded_total = round(cost.RTDE_flyaway.total / 1e6) * 1e6;
-formatted_total = sprintf('%0.0f', rounded_total);  % Format the number as a string with no decimal places
-formatted_total_with_commas = regexprep(formatted_total, '(?<=\d)(?=(\d{3})+(?!\d))', ',');
-
-title(['Program RTDE & Flyaway Costs Breakdown']);
-
-
-%% Operations %%
-
-% Exclude "total" and create a pie chart
-labels = {'Fuel, Oil, Lubricant', 'Flight Crew', 'Maintenance Crew', ...
-          'Consumable Materials', 'Misc', 'Indirect Personnel', ...
-          'Spares', 'Depot'};
-
-values = [cost.operation.fuel_oil_lubricant, cost.operation.direct_personnel.flight_crew, ...
-          cost.operation.direct_personnel.maintenance_crew, cost.operation.consumable_materials, ...
-          cost.operation.misc, cost.operation.indirect_personnel, cost.operation.spares, ...
-          cost.operation.depot];
-
-% Calculate the total
-cost.operation.total = sum(values);
-
-% Updated muted blue-gray-purple color palette with navy-like darker shades
-colors = [142, 160, 186; 171, 184, 197; 154, 153, 174; 186, 175, 192; ...
-          123, 133, 161; 102, 116, 138; 89, 101, 129; 78, 92, 113] / 255;
-
-% Create the pie chart with percentages
-figure;
-h = pie(values);
-
-% Add labels with percentages, formatted to 2 decimal points
-percentLabels = arrayfun(@(x) ...
-    [labels{x}, ' (', sprintf('%.2f', (values(x) / cost.operation.total) * 100), '%)'], ...
-    1:length(values), 'UniformOutput', false);
-textHandles = findobj(h, 'Type', 'Text');
-for i = 1:length(textHandles)
-    textHandles(i).String = percentLabels{i};
-end
-
-% Apply new colors to each segment
-patchHandles = findobj(h, 'Type', 'Patch'); % Find pie chart patches
-for i = 1:length(patchHandles)
-    patchHandles(i).FaceColor = colors(i, :); % Assign new color
-end
-
-% Add a title with the total, formatted with commas
-rounded_total = round(cost.operation.total / 1e6) * 1e6;
-formatted_total = sprintf('%0.0f', rounded_total);  % Format without decimal places
-formatted_total_with_commas = regexprep(formatted_total, '(?<=\d)(?=(\d{3})+(?!\d))', ',');
-
-title(['Program Operation Costs Breakdown']);
+% figure;
+% h = pie(values);
+% 
+% % Add labels with percentages, formatted to 2 decimal points
+% percentLabels = arrayfun(@(x) ...
+%     [labels{x}, ' (', sprintf('%.2f', (values(x) / cost.operation.total) * 100), '%)'], ...
+%     1:length(values), 'UniformOutput', false);
+% textHandles = findobj(h, 'Type', 'Text');
+% for i = 1:length(textHandles)
+%     textHandles(i).String = percentLabels{i};
+% end
+% 
+% % Apply new colors to each segment
+% patchHandles = findobj(h, 'Type', 'Patch'); % Find pie chart patches
+% for i = 1:length(patchHandles)
+%     patchHandles(i).FaceColor = colors(i, :); % Assign new color
+% end
+% 
+% % Add a title with the total, formatted with commas
+% rounded_total = round(cost.operation.total / 1e6) * 1e6;
+% formatted_total = sprintf('%0.0f', rounded_total);  % Format without decimal places
+% formatted_total_with_commas = regexprep(formatted_total, '(?<=\d)(?=(\d{3})+(?!\d))', ',');
+% 
+% title(['Program Operation Costs Breakdown']);
 
 
 %% Update struct

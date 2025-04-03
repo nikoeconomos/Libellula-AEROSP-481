@@ -19,7 +19,7 @@ function [T_W] = T_W_sp_ex_pwr_calc_4(aircraft, W_S)
 % -------------------------------------------------------------------------
 
 alt = ConvLength(15000,'ft','m');
-mach = 0.9;
+mach = aircraft.performance.maneuver_mach;
 CD0 = aircraft.aerodynamics.CD0.cruise;
 e = aircraft.aerodynamics.e.cruise;
 n = 1;

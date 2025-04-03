@@ -50,7 +50,7 @@ aircraft.performance.mach.endurance = 0.4; % estimate from online
 aircraft.performance.mach.climb   = 0.548; % TODO UPDATE 
 aircraft.performance.mach.takeoff = 0.282; %estimate from?
 % aircraft.performance.mach.max_sustained_turn = 1.2; %[Mach] from RFP
-% aircraft.performance.mach.min_sustained_turn = 0.9; %[Mach] from RFP
+aircraft.performance.mach.min_sustained_turn = 0.9; %[Mach] from RFP
 
 m = aircraft.performance.mach;
 

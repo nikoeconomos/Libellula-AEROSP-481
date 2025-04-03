@@ -27,25 +27,29 @@ function [aircraft] = load_inputs(file,ind)
 %% Mission %%
 %%%%%%%%%%%%%
 
-aircraft.weight.weapons.num_missiles = file(1,ind); % Missile count
+aircraft.weight.weapons.num_missiles = file(ind,1); % Missile count
 
-aircraft.performance.mach.max_sustained_turn = file(2,ind); % First maneuver speed
+aircraft.performance.mach.max_sustained_turn = file(ind,2); % First maneuver speed
 
-aircraft.performance.mach.min_sustained_turn = file(3,ind);
+aircraft.performance.maneuver_mach = file(ind,3);
 
-aircraft.performance.max_instantaneous_turn_rate = deg2rad(file(4,ind)); % Maximum instantaneous turn rate
+aircraft.performance.max_maneuver_g_load = file(ind,4);
 
-aircraft.performance.corner_speed_TAS = file(5,ind); % Corner speed
+aircraft.performance.max_instantaneous_turn_rate = deg2rad(file(ind,5)); % Maximum instantaneous turn rate
+
+aircraft.performance.corner_speed_TAS = file(ind,6); % Corner speed
 
 %%%%%%%%%%%%%%%%%
 %% Wing Design %%
 %%%%%%%%%%%%%%%%%
 
-aircraft.geometry.wing.AR = file(6,ind); % Wing aspect ratio
+aircraft.geometry.wing.S_ref = file(ind,7); % Wing aspect ratio
 
-aircraft.geometry.wing.sweep_LE = file(7,ind); % Wing sweep angle
+aircraft.geometry.wing.AR = file(ind,8); % Wing aspect ratio
 
-aircraft.geometry.wing.taper_ratio = file(8,ind); % Wing taper ratio
+aircraft.geometry.wing.sweep_LE = file(ind,9); % Wing sweep angle
+
+aircraft.geometry.wing.taper_ratio = file(ind,10); % Wing taper ratio
 
 %%%%%%%%%%%%%%%%%%%%%%
 %% Engine Selection %%

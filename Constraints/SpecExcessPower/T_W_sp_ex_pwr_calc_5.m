@@ -19,10 +19,10 @@ function [T_W] = T_W_sp_ex_pwr_calc_5(aircraft, W_S)
 % -------------------------------------------------------------------------
 
 alt = ConvLength(0,'ft','m');
-mach = 0.9;
+mach = aircraft.performance.maneuver_mach;
 CD0 = aircraft.aerodynamics.CD0.cruise;
 e = aircraft.aerodynamics.e.cruise;
-n = 5;
+n = aircraft.performance.max_maneuver_g_load;
 Ps = ConvLength(300,'ft','m');
 
 T_W = T_W_spec_excess_power_calc_general(aircraft, W_S, alt, mach, CD0, e, n, Ps);

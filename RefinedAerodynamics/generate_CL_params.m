@@ -25,7 +25,9 @@ aircraft.geometry.length_regression_calc = @(W0) 0.389*W0^0.39; % this is a hist
 wing = aircraft.geometry.wing;
 
 % wing.sweep_LE = deg2rad(44.9); %radians
-wing.S_ref = 25.25;
+% wing.S_ref = 25.25;
+
+aircraft.performance.design_point.S_ref_1 = aircraft.geometry.wing.S_ref;
 
 wing.S_flapped = 7.23*2; % TODO UPDATE
 wing.S_slatted = 7.23*2; % TODO UPDATE
