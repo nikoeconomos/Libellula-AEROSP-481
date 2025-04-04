@@ -287,8 +287,16 @@ function aircraft = generate_component_weights(aircraft)
 
     aircraft.weight.ff = ff_total_improved_calc(aircraft, W_0);
 
+iter = 0; % Initialize iteration counter 
+
     while converged == false
         
+        iter = iter + 1; 
+        
+        if iter > 10000 
+            error('Iteration limit exceeded: over 10,000 iterations.'); 
+        end
+
         w.ff = ff_total_improved_calc(aircraft, W_0);
         
         w.components.fuel = ff    * W_0;
