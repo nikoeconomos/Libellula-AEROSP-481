@@ -58,6 +58,10 @@ function aircraft = generate_component_weights(aircraft)
 
     fus_length_to_width = 16.5 / 2.6;
 
+    aircraft.geometry.fuselage.width = fus_length_mean / fus_length_to_width;
+
+    aircraft.geometry.fuselage.A_max = 2.7;
+
     aircraft.weight.components.fuselage = (aircraft.geometry.fuselage.S_wet*aircraft.weight.density.fuselage_area)...
                                           *aircraft.weight.fudge_factor.fuselage;
 
@@ -69,11 +73,10 @@ function aircraft = generate_component_weights(aircraft)
     aircraft.weight.func.fuselage_roskam = @(W0) ConvMass(1 * 10^0.43 * (K_inl)^1.42 * (q_D / 100)^0.283 * (W0 / 1000)^0.95 * (l_f / h_f)^0.71, 'lbm', 'kg') ...
                                                  * aircraft.weight.fudge_factor.fuselage; 
 
-
-    % for drag calculation. Not currently being used.
-    aircraft.geometry.inlet.length = NaN;
-    aircraft.geometry.inlet.S_wet  = NaN;
-    aircraft.geometry.inlet.A_max  = NaN;
+    % % for drag calculation. Not currently being used.
+    % aircraft.geometry.inlet.length = NaN;
+    % aircraft.geometry.inlet.S_wet  = NaN;
+    % aircraft.geometry.inlet.A_max  = NaN;
     
     %%%%%%%%%%%%%%%%%%%
     %% WING GEOMETRY %%
@@ -88,9 +91,9 @@ function aircraft = generate_component_weights(aircraft)
     
     approx_conc_wing = fus_length_mean * 0.1576 * 0.92;
     
-    %wing.S_exposed = 7.976*2; % from CAD
+    wing.S_exposed = wing.S_ref - approx_conc_wing; % from CAD
 
-    wing.S_wet = 2 * (wing.S_ref - approx_conc_wing); %m2 TODO APPROXIMATION, UPDATE WITH A BETTER ONE
+    wing.S_wet = 2 * wing.S_exposed; %m2 TODO APPROXIMATION, UPDATE WITH A BETTER ONE
     
     %wing.S_wet = 27.35; %from CAD
     
@@ -263,6 +266,7 @@ function aircraft = generate_component_weights(aircraft)
     w.components.gfe_total = w.gfe.ICNIA + w.gfe.databus + w.gfe.INEWS + ...
                              w.gfe.VMS + w.gfe.EES + ...
                              w.gfe.APU + w.gfe.IRSTS + w.gfe.AESA;
+    w.paylo
 
     aircraft.weight = w;
 
@@ -283,8 +287,16 @@ function aircraft = generate_component_weights(aircraft)
 
     aircraft.weight.ff = ff_total_improved_calc(aircraft, W_0);
 
+iter = 0; % Initialize iteration counter 
+
     while converged == false
         
+        iter = iter + 1; 
+        
+        if iter > 10000 
+            error('Iteration limit exceeded: over 10,000 iterations.'); 
+        end
+
         w.ff = ff_total_improved_calc(aircraft, W_0);
         
         w.components.fuel = ff    * W_0;

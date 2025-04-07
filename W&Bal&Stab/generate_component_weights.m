@@ -73,11 +73,10 @@ function aircraft = generate_component_weights(aircraft)
     aircraft.weight.func.fuselage_roskam = @(W0) ConvMass(1 * 10^0.43 * (K_inl)^1.42 * (q_D / 100)^0.283 * (W0 / 1000)^0.95 * (l_f / h_f)^0.71, 'lbm', 'kg') ...
                                                  * aircraft.weight.fudge_factor.fuselage; 
 
-
-    % for drag calculation. Not currently being used.
-    aircraft.geometry.inlet.length = NaN;
-    aircraft.geometry.inlet.S_wet  = NaN;
-    aircraft.geometry.inlet.A_max  = NaN;
+    % % for drag calculation. Not currently being used.
+    % aircraft.geometry.inlet.length = NaN;
+    % aircraft.geometry.inlet.S_wet  = NaN;
+    % aircraft.geometry.inlet.A_max  = NaN;
     
     %%%%%%%%%%%%%%%%%%%
     %% WING GEOMETRY %%
@@ -92,9 +91,9 @@ function aircraft = generate_component_weights(aircraft)
     
     approx_conc_wing = fus_length_mean * 0.1576 * 0.92;
     
-    %wing.S_exposed = 7.976*2; % from CAD
+    wing.S_exposed = wing.S_ref - approx_conc_wing; % from CAD
 
-    wing.S_wet = 2 * (wing.S_ref - approx_conc_wing); %m2 TODO APPROXIMATION, UPDATE WITH A BETTER ONE
+    wing.S_wet = 2 * wing.S_exposed; %m2 TODO APPROXIMATION, UPDATE WITH A BETTER ONE
     
     %wing.S_wet = 27.35; %from CAD
     
@@ -267,6 +266,7 @@ function aircraft = generate_component_weights(aircraft)
     w.components.gfe_total = w.gfe.ICNIA + w.gfe.databus + w.gfe.INEWS + ...
                              w.gfe.VMS + w.gfe.EES + ...
                              w.gfe.APU + w.gfe.IRSTS + w.gfe.AESA;
+    w.payload = w.payload + w.components.gfe_total;
 
     aircraft.weight = w;
 
@@ -290,7 +290,7 @@ function aircraft = generate_component_weights(aircraft)
 iter = 0; % Initialize iteration counter 
 
     while converged == false
-        
+        fprintf('Iter %d: W_0 = %.2f | W_0_new = %.2f | diff = %.6f\n', iter, W_0, W_0_new, abs(W_0_new - W_0));
         iter = iter + 1; 
         
         if iter > 10000 

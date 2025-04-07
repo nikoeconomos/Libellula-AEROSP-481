@@ -24,13 +24,21 @@ for ind = 1:size(inputs,1)
     try
         % Create and populate the aircraft struct for the current index
         aircraft = load_inputs(inputs, ind);
+
         aircraft = generate_performance_params(aircraft);
+
         aircraft = generate_DCA_mission(aircraft);
+
         aircraft = generate_init_weight_params(aircraft); % gives a TOGW
+
         aircraft = generate_prop_params(aircraft);
+
         aircraft = generate_CL_params(aircraft); % guess S_ref is input
+
         aircraft = generate_aerodynamics_params(aircraft);
+
         aircraft = generate_init_weight_params(aircraft); % run again for a better estimate - gives a TOGW
+        
         aircraft = generate_climb_segments(aircraft);
         
         % Optional: Input F35 parameters if desired
