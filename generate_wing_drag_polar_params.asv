@@ -1,0 +1,50 @@
+function [aircraft] = generate_wing_drag_polar_params(aircraft)
+
+% Wing parameters
+S_wet_wing = aircraft.geometry.wing.S_wet; % [m^2]
+Q_wing    = 1; % Assumed 1 for a mid-wing configuration
+
+loc_max_thickness_wing = aircraft.geometry.wing.chordwise_loc_max_thickness; % [unitless]
+t_c_wing               = aircraft.geometry.wing.t_c_root; % Average is 6%
+
+sweep_HC_wing = aircraft.geometry.wing.sweep_HC; % [degrees] Sweep angle of max thickness line
+MAC_wing      = aircraft.geometry.wing.MAC; % [m] chord
+
+Re_wing = Re_fuselage * (MAC_wing / l_fuselage);
+
+Cf_wing = Cf_turbulent_calc(Re_wing);
+
+FF_wing = (1 + (0.6 / (loc_max_thickness_wing)) * (t_c_wing) + 100 * (t_c_wing)^4) * (1.34 * freestream_mach.^0.18 * cos(sweep_HC_wing)^0.28);
+
+CD0_wing = (Cf_wing .* FF_wing * Q_wing * S_wet_wing) ./ S_ref_wing;
+
+
+%% Leakage and Protuberance Drag %%
+
+CD0_lp_percent = 0.02; % Estimated from table in slides slide 20, 5% of total parasite drag
+
+%% Total Parasitic Drag Calc %%
+
+CD0_component_sum  = CD0_wing + % CD0_fuselage + CD0_htail + CD0_vtail + CD0_inlets;
+
+aero.CD0.cruise = (CD0_component_sum(3) + CD0_misc)/(1-CD0_lp_percent); % 5 % of cd0 is leakage and protruberance
+aero.CD0.dash  = (CD0_component_sum(6) + CD0_misc)/(1-CD0_lp_percent); 
+
+%%%%%%%%%%%%%%%%%%%%%%%%
+%% CALCULATE e VALUES %%
+%%%%%%%%%%%%%%%%%%%%%%%%
+
+aero.e.cruise              = oswaldfactor(aircraft.geometry.wing.AR, aircraft.geometry.wing.sweep_LE,'shevell', aero.CD0.cruise, 0, 0.98);
+aero.e.dash                = oswaldfactor(aircraft.geometry.wing.AR, aircraft.geometry.wing.sweep_LE,'shevell', aero.CD0.dash, 0, 0.98);
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%% LIFT INDUCED DRAG CALCULATIONS %%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+AR_wing = aircraft.geometry.wing.AR;
+
+aero.CDi.cruise              = aero.CL.cruise^2 / (pi * AR_wing * aero.e.cruise);
+aero.CDi.dash                = aero.CL.dash^2   / (pi * AR_wing * aero.e.cruise);
+
+
+end

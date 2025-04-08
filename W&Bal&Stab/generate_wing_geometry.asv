@@ -1,20 +1,15 @@
-function [aircraft] = generate_wing_geometry(aircraft)
+function [aircraft] = generate_wing_geom_and(aircraft)
     %%%%%%%%%%%%%%%%%%%
     %% WING GEOMETRY %%
     %%%%%%%%%%%%%%%%%%%
 
-    aircraft.geometry.wing.AR = aircraft.geometry.wing.AR; % AR was already set in geometry
-
     % for convenience
     wing = aircraft.geometry.wing;
 
-    wing.S_ref = aircraft.geometry.wing.S_ref; %m2, updated in geometry
+    % wing.AR = aircraft.geometry.wing.AR; 
+    % 
+    % wing.S_ref = aircraft.geometry.wing.S_ref;
     
-    approx_conc_wing = fus_length_mean * 0.1576 * 0.92;
-    
-    wing.S_exposed = wing.S_ref - approx_conc_wing; % from CAD
-
-    wing.S_wet = 2 * wing.S_exposed; %m2 TODO APPROXIMATION, UPDATE WITH A BETTER ONE
     
     %wing.S_wet = 27.35; %from CAD
     
@@ -26,7 +21,15 @@ function [aircraft] = generate_wing_geometry(aircraft)
     wing.c_tip = wing.c_root*wing.taper_ratio;
 
     wing.t_c_root                    = 0.05; % 5% tc ratio, from our design airfoil
-    wing.chordwise_loc_max_thickness = 0.50; % pulled from cad
+    %wing.chordwise_loc_max_thickness = 0.50; % input subject to SCREENING
+
+    approx_conc_wing = fus_length_mean * 0.1576 * 0.92;
+
+    wing.S_exposed = wing.S_ref - approx_conc_wing; % from CAD
+
+    wing.S_wet = 2 * wing.S_exposed; %m2 TODO APPROXIMATION, UPDATE WITH A BETTER ONE
+
+    wing.S_wet = aircraft.geometry.S_wet_regression_calc(aircraft.weight.togw);
 
     %sweeps
     wing.sweep_LE = aircraft.geometry.wing.sweep_LE; % in radians, set in generate_geometry

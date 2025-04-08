@@ -187,18 +187,18 @@ delta_CD0_landing_flaps_slats = F_flap * (cf_c) * (S_flapped / S_ref_wing) * (ra
 
 %% Total Parasitic Drag Calc %%
 
-CD0_component_sum  = CD0_fuselage + CD0_wing  + CD0_htail + CD0_vtail; %+ CD0_inlets;
+CD0_component_sum  = CD0_wing + % CD0_fuselage + CD0_htail + CD0_vtail + CD0_inlets;
 
 aero.CD0.cruise = (CD0_component_sum(3) + CD0_misc)/(1-CD0_lp_percent); % 5 % of cd0 is leakage and protruberance
 aero.CD0.dash  = (CD0_component_sum(6) + CD0_misc)/(1-CD0_lp_percent); 
 
-aero.CD0.takeoff_landing_clean = (CD0_component_sum(1) + CD0_misc)/(1-CD0_lp_percent); % 5 % of cd0 is leakage and protruberance
-
-aero.CD0.takeoff_flaps_slats      = aero.CD0.takeoff_landing_clean + delta_CD0_takeoff_flaps_slats;
-aero.CD0.takeoff_flaps_slats_gear = aero.CD0.takeoff_flaps_slats + CD0_lg;
-
-aero.CD0.landing_flaps_slats      = aero.CD0.takeoff_landing_clean + delta_CD0_landing_flaps_slats;
-aero.CD0.landing_flaps_slats_gear = aero.CD0.landing_flaps_slats + CD0_lg;
+% aero.CD0.takeoff_landing_clean = (CD0_component_sum(1) + CD0_misc)/(1-CD0_lp_percent); % 5 % of cd0 is leakage and protruberance
+% 
+% aero.CD0.takeoff_flaps_slats      = aero.CD0.takeoff_landing_clean + delta_CD0_takeoff_flaps_slats;
+% aero.CD0.takeoff_flaps_slats_gear = aero.CD0.takeoff_flaps_slats + CD0_lg;
+% 
+% aero.CD0.landing_flaps_slats      = aero.CD0.takeoff_landing_clean + delta_CD0_landing_flaps_slats;
+% aero.CD0.landing_flaps_slats_gear = aero.CD0.landing_flaps_slats + CD0_lg;
 
 %%%%%%%%%%%%%%%%%%%%%%%%
 %% CALCULATE e VALUES %%
@@ -206,10 +206,10 @@ aero.CD0.landing_flaps_slats_gear = aero.CD0.landing_flaps_slats + CD0_lg;
 
 aero.e.cruise              = oswaldfactor(aircraft.geometry.wing.AR, aircraft.geometry.wing.sweep_LE,'shevell', aero.CD0.cruise, 0, 0.98);
 aero.e.dash                = oswaldfactor(aircraft.geometry.wing.AR, aircraft.geometry.wing.sweep_LE,'shevell', aero.CD0.dash, 0, 0.98);
-aero.e.takeoff_flaps_slats = oswaldfactor(aircraft.geometry.wing.AR, aircraft.geometry.wing.sweep_LE,'shevell', aero.CD0.takeoff_flaps_slats, 0, 0.98);
-aero.e.landing_flaps_slats = oswaldfactor(aircraft.geometry.wing.AR, aircraft.geometry.wing.sweep_LE,'shevell', aero.CD0.landing_flaps_slats, 0, 0.98);
-
-aero.e.htail = 1.78 * (1 - (0.045 * aircraft.geometry.htail.AR^0.68) ) - 0.64; % from the presentation slide 26
+% aero.e.takeoff_flaps_slats = oswaldfactor(aircraft.geometry.wing.AR, aircraft.geometry.wing.sweep_LE,'shevell', aero.CD0.takeoff_flaps_slats, 0, 0.98);
+% aero.e.landing_flaps_slats = oswaldfactor(aircraft.geometry.wing.AR, aircraft.geometry.wing.sweep_LE,'shevell', aero.CD0.landing_flaps_slats, 0, 0.98);
+% 
+% aero.e.htail = 1.78 * (1 - (0.045 * aircraft.geometry.htail.AR^0.68) ) - 0.64; % from the presentation slide 26
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %% LIFT INDUCED DRAG CALCULATIONS %%
